@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public bool endgame;
 
+    private int totalSafePieces; // Casillas sin bomba
+    private int revealedSafePieces; // Cuántas han sido reveladas
+
     // Awake va antes que Start, osea, antes de arrancar si quiera
 
     private void Awake()
@@ -23,6 +26,29 @@ public class GameManager : MonoBehaviour
         else if (instance != this)
         {
             Destroy(gameObject);
+        }
+    }
+
+    // Lógica de victoria
+    public void SetTotalSafePieces(int total)
+    {
+        totalSafePieces = total;
+        revealedSafePieces = 0;
+    }
+
+    public void AddRevealedPiece()
+    {
+        revealedSafePieces++;
+        CheckVictory();
+    }
+
+    private void CheckVictory()
+    {
+        if (revealedSafePieces >= totalSafePieces && !endgame)
+        {
+            endgame = true;
+            endMenu.SetActive(true);
+            ShowVictory();
         }
     }
 

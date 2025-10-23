@@ -65,6 +65,9 @@ public class Piece : MonoBehaviour
 
                 int bombsNumber = Generator.gen.GetBombsAround(x, y);
 
+                // Avisar al GameManager que se ha revelado una pieza segura
+                GameManager.instance.AddRevealedPiece();
+
                 if (bombsNumber != 0){
                     transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = bombsNumber.ToString();
                 } else {

@@ -45,6 +45,8 @@ public class Generator : MonoBehaviour
 
     public void Generate()
     {
+        GameManager.instance.SetTotalSafePieces((width * height) - bombsNumber);
+
         map = new GameObject[width][];
         for (int i = 0; i < map.Length; i++){
             map[i] = new GameObject[height];
