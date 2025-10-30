@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -92,6 +93,9 @@ public class GameManager : MonoBehaviour
         // Ahora mismo siempre recibirá 0 porque, si hay un error, hay un return antes
         if (Generator.gen.Validate() == 0)
         {
+            // Limpio antes de generar
+            Generator.gen.ClearMap();
+
             Generator.gen.Generate();
 
             // Hemos generado el mapa, menú bye-bye
@@ -109,11 +113,27 @@ public class GameManager : MonoBehaviour
     {
         endMenu.transform.Find("Victoria").gameObject.SetActive(false);
         endMenu.transform.Find("Derrota").gameObject.SetActive(true);
+        StartCoroutine(EndGameRoutine());
     }
 
     public void ShowVictory()
     {
         endMenu.transform.Find("Victoria").gameObject.SetActive(true);
         endMenu.transform.Find("Derrota").gameObject.SetActive(false);
+        StartCoroutine(EndGameRoutine());
+    }
+
+    private IEnumerator EndGameRoutine()
+    {
+        // Esperar 2 segundos
+        yield return new WaitForSeconds(2f);
+
+        // Ocultar menu final y mostrar inicial
+        endMenu.SetActive(false);
+        startMenu.SetActive(true);
+
+        // Reset de valores
+        endgame = false;
+        revealedSafePieces = 0;
     }
 }

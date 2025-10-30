@@ -8,6 +8,10 @@ public class Generator : MonoBehaviour
     [SerializeField] private GameObject[][] map;
     public bool endgame; // comienza en false
 
+    // ALTERNATIVA A RECORRER TODO EL MAPA:
+    private Transform boardParent;
+    // > Propóstio: Ser el padre de todas las piezas para luego destruirlas todas de golpe
+
     // Singleton pt1
     public static Generator gen;
 
@@ -45,6 +49,13 @@ public class Generator : MonoBehaviour
 
     public void Generate()
     {
+        // Si existía un tablero anterior, lo destruyo completamente
+        if (boardParent != null)
+            Destroy(boardParent.gameObject);
+
+        // Creo un nuevo objeto vacío para contener las piezas
+        boardParent = new GameObject("Board").transform;
+
         GameManager.instance.SetTotalSafePieces((width * height) - bombsNumber);
 
         map = new GameObject[width][];
@@ -57,7 +68,8 @@ public class Generator : MonoBehaviour
             for(int i = 0; i < width; i++){
 
                 // Asigno a cada objeto una posicion en la matriz para emplearlos luego (+generarlas por Instantiate)
-                map[i][j] = Instantiate(piece, new Vector3(i, j, 0), Quaternion.identity);
+                // ADICIÓN AL CÓDIGO DEL PROFESOR: Asigno el padre boardParent a cada pieza instanciada
+                map[i][j] = Instantiate(piece, new Vector3(i, j, 0), Quaternion.identity, boardParent);
 
                 // Tras instanciar la pieza le asigno inmediatamente sus coordenadas en el mapa
                 map[i][j].GetComponent<Piece>().setX(i);
@@ -84,6 +96,28 @@ public class Generator : MonoBehaviour
         }
 
     }
+
+    public void ClearMap()
+    {
+        if (boardParent != null)
+            Destroy(boardParent.gameObject);
+
+        map = null;
+
+        // MÉTODO ANTIGUO RECORRIENDO LA MATRIZ
+        //// ¿Nada que limpiar? Fuera
+        //if (map == null) return;
+
+        //// Recorro la matriz destruyendo cada objeto
+        //for (int i = 0; i < map.Length; i++)
+        //{
+        //    for (int j = 0; j < map[i].Length; j++)
+        //    {
+        //        Destroy(map[i][j]);
+        //    }
+        //}
+    }
+
 
     public int GetBombsAround(int x, int y)
     {

@@ -57,7 +57,9 @@ public class Piece : MonoBehaviour
                 if (bombPrefab != null)
                 {
                     // Crear bomba en la posición de la casilla
-                    Instantiate(bombPrefab, transform.position, Quaternion.identity);
+                    var obj = Instantiate(bombPrefab, transform.position, Quaternion.identity);
+                    // Si lo convertimos en hijo de la casilla, al borrar el mapa se borra también la bomba
+                    obj.transform.SetParent(this.transform);
                 }
             } else {
                 // Cambiar color casilla porque ya está comprobada
