@@ -11,32 +11,33 @@ public class Piece : MonoBehaviour
     public void setX(int x){
         this.x = x; 
     }
-
     public void setY(int y){
         this.y = y;
     }
-
     public void setBomb(bool bomb){
         this.bomb = bomb;
     }
     public void setCheck(bool check){
         this.check = check;
     }
+    public void setFlag(bool flag){
+        this.flag = flag;
+    }
 
     public int getX(){
         return x;
     }
-
     public int getY(){
         return y;
     }
-
     public bool isBomb(){
         return bomb;
     }
-
     public bool isCheck(){
         return check;
+    }
+    public bool isFlag(){
+        return flag;
     }
 
     public void DrawBomb()

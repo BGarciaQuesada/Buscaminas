@@ -46,6 +46,10 @@ public class Generator : MonoBehaviour
     {
         bombsNumber = this.bombsNumber;
     }
+    public GameObject[][] GetMap()
+    {
+        return map;
+    }
 
     public void Generate()
     {
