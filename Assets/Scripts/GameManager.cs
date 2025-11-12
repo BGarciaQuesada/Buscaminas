@@ -15,6 +15,10 @@ public class GameManager : MonoBehaviour
     private int totalSafePieces; // Casillas sin bomba
     private int revealedSafePieces; // Cuántas han sido reveladas
 
+    public static bool botEnabled;
+    public GameObject AIControllerPrefab;
+    private AIController bot;
+
     // Awake va antes que Start, osea, antes de arrancar si quiera
 
     private void Awake()
@@ -61,6 +65,18 @@ public class GameManager : MonoBehaviour
         endMenu.SetActive(false);
     }
 
+    public void PlayNormal()
+    {
+        botEnabled = false;
+        GameStart();
+    }
+
+    public void PlayBot()
+    {
+        botEnabled = true;
+        GameStart();
+    }
+
     public void GameStart()
     {
         // Recoger datos del menú usando los métodos de StartMenu
@@ -101,6 +117,14 @@ public class GameManager : MonoBehaviour
             // Hemos generado el mapa, menú bye-bye
             StartMenu.instance.HideError();
             startMenu.SetActive(false);
+
+            if (botEnabled)
+            {
+                Debug.Log("Creando instancia bot");
+                GameObject botObj = Instantiate(AIControllerPrefab);
+                bot = botObj.GetComponent<AIController>();
+                bot.StartBot();
+            }
         }
         else
         {
@@ -135,5 +159,11 @@ public class GameManager : MonoBehaviour
         // Reset de valores
         endgame = false;
         revealedSafePieces = 0;
+
+        if (bot != null)
+        {
+            Destroy(bot.gameObject);
+            bot = null;
+        }
     }
 }

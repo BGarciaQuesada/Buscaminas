@@ -1,30 +1,25 @@
-﻿using UnityEngine;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class AIController : MonoBehaviour
 {
     // Declaración de variables (necesitarás algunas más)
     public float turnTime = 0.5f;
-
-    GameObject[][] map = Generator.gen.GetMap();
-    List<Piece> neighbors;
-    List<Piece> hiddenNeighbors;
-    int flaggedCount;
-
-
+    GameObject[][] map;
 
     // El Bot comienza a Jugar. Este Código no hay que cambiarlo
-    void Start()
+    public void StartBot()
     {
+        Debug.Log("Bot lanzado.");
+        StopAllCoroutines(); // por si acaso
+        map = Generator.gen.GetMap();
         StartCoroutine(Play());
     }
 
-
     System.Collections.IEnumerator Play()
     {
-        yield return new WaitForSeconds(1f);
-
         while (!GameManager.instance.endgame)
         {
             bool actionDone = LogicPlay();
@@ -43,6 +38,10 @@ public class AIController : MonoBehaviour
 
     bool LogicPlay()
     {
+        // por si el bot empieza antes de que exista el tablero (no debería pasar ahora mismo)
+        if (map == null)
+            return false;
+
         bool action = false;
 
         // Recorremos todo el mapa...
@@ -56,14 +55,14 @@ public class AIController : MonoBehaviour
                 if (centerPiece.isCheck())
                 {
                     // Obtenemos vecinos
-                    GetNeighbors(x, y);
+                    List<Piece> neighbors = GetNeighbors(x, y);
 
                     // Obtenemos el número de bombas alrededor (solo devuelve un int NO DONDE ESTÁN)
                     int bombsAround = Generator.gen.GetBombsAround(x, y);
 
                     // Contamos cuántas están ocultas (ni check ni bandera) y cuántas tienen bandera
-                    flaggedCount = neighbors.Count(p => p.isFlag());
-                    hiddenNeighbors = neighbors.Where(p => !p.isCheck() && !p.isFlag()).ToList();
+                    int flaggedCount = neighbors.Count(p => p.isFlag());
+                    List<Piece> hiddenNeighbors = neighbors.Where(p => !p.isCheck() && !p.isFlag()).ToList();
 
                     // Debug.Log($"({x},{y}) ocultas: {hidden.Count}, banderas: {flagged}");
 
@@ -93,8 +92,10 @@ public class AIController : MonoBehaviour
         return action;
     }
 
-    void GetNeighbors(int x, int y)
+    List<Piece> GetNeighbors(int x, int y)
     {
+        List<Piece> neighbors = new List<Piece>();
+
         int width, height;
         Generator.gen.GetWidth(out width);
         Generator.gen.GetHeight(out height);
@@ -124,13 +125,16 @@ public class AIController : MonoBehaviour
                 }
             }
         }
+        return neighbors;
     }
 
 
     void RandomPlay()
     {
         // De todas las celdas que no se han chequeado, click_izquierdo en una de forma aleatoria;
-        
+
+        if (map == null) return; // evita crasheo si no existe mapa
+
         List<Piece> candidates = new List<Piece>();
 
         for (int x = 0; x < map.Length; x++)
